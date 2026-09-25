@@ -1,0 +1,33 @@
+name: Build Gagne Guinee APK
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Extraire le projet
+        run: unzip -o gagne_guinee_admob.zip -d project
+
+      - name: Installer Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Compiler APK
+        working-directory: project
+        run: |
+          chmod +x gradlew
+          ./gradlew assembleDebug
+
+      - name: Télécharger APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: gagne-guinee-apk
+          path: project/app/build/outputs/apk/debug/app-debug.apk
